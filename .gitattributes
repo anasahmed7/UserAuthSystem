@@ -1,2 +1,36 @@
+# =======================
+# Line endings
+# =======================
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# =======================
+# Language detection tweaks for GitHub Linguist
+# =======================
+
+# Tell GitHub to ignore backend compiled files
+backend/target/** linguist-vendored
+backend/build/** linguist-vendored
+
+# Tell GitHub to ignore frontend build files
+frontend/dist/** linguist-vendored
+frontend/dist-ssr/** linguist-vendored
+frontend/node_modules/** linguist-vendored
+
+# Force GitHub to detect Java & JavaScript from source
+*.java linguist-language=Java
+*.js linguist-language=JavaScript
+*.jsx linguist-language=JavaScript
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+*.css linguist-language=CSS
+*.html linguist-language=HTML
+
+# =======================
+# Treat config files as text
+# =======================
+*.properties text
+*.yml text
+*.yaml text
+*.json text
+*.md texts
