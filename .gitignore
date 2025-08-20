@@ -1,3 +1,6 @@
+# =========================
+# Java / Spring Boot
+# =========================
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -31,3 +34,32 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# =========================
+# Python (backend-python-api)
+# =========================
+backend-python-api/venv/
+backend-python-api/.venv/
+backend-python-api/env/
+backend-python-api/__pycache__/
+backend-python-api/.mypy_cache/
+backend-python-api/.pytest_cache/
+backend-python-api/.env
+
+# =========================
+# Node.js / React (frontend)
+# =========================
+frontend/node_modules/
+frontend/.vite/
+frontend/dist/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db

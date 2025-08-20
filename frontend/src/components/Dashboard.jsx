@@ -5,25 +5,19 @@ import "./Dashboard.css";
 function Dashboard() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState("");
-    const [showResults, setShowResults] = useState(false);
+    const [tableData, setTableData] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
 
     const handleSignOut = async () => {
         try {
-            // Call backend logout
             await fetch("http://localhost:8080/api/auth/logout", {
                 method: "POST",
                 credentials: "include"
             });
 
-            // Remove stored JWT if any
             localStorage.removeItem("token");
-
-            // Show "Signed out" message
             setShowNotification(true);
 
-            // Redirect to login after a short delay
             setTimeout(() => {
                 setShowNotification(false);
                 navigate("/", { replace: true });
@@ -37,25 +31,56 @@ function Dashboard() {
         }
     };
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
         const query = searchQuery.trim();
+        if (!query) return;
 
-        if (query) {
-            console.log("Searching for:", query);
-            setSearchResults(`You searched for: "${query}".`);
-            setShowResults(true);
-        } else {
-            setShowResults(false);
+        try {
+            const resp = await fetch("http://localhost:5001/api/nlq", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: query }),
+            });
+
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.detail || "Query failed");
+
+            if (data.rows && data.rows.length > 0) {
+                setTableData({
+                    columns: data.columns,
+                    rows: data.rows
+                });
+            } else {
+                setTableData({ columns: [], rows: [] });
+            }
+        } catch (err) {
+            console.error("Error:", err.message);
+            setTableData({ columns: [], rows: [] });
         }
     };
 
-    const handleInputChange = (e) => {
-        setSearchQuery(e.target.value);
-        if (e.target.value.trim() === '') {
-            setShowResults(false);
-        }
-    };
+    // ✅ inline ClientTable (no need separate file)
+    const ClientTable = ({ columns, rows }) => (
+        <table className="client-table">
+            <thead>
+            <tr>
+                {columns.map((col, i) => (
+                    <th key={i}>{col}</th>
+                ))}
+            </tr>
+            </thead>
+            <tbody>
+            {rows.map((row, i) => (
+                <tr key={i}>
+                    {row.map((cell, j) => (
+                        <td key={j}>{cell}</td>
+                    ))}
+                </tr>
+            ))}
+            </tbody>
+        </table>
+    );
 
     return (
         <div className="dashboard-container">
@@ -67,7 +92,7 @@ function Dashboard() {
                         type="text"
                         placeholder="Search..."
                         value={searchQuery}
-                        onChange={handleInputChange}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         autoComplete="off"
                     />
                     <button type="submit">Search</button>
@@ -82,10 +107,17 @@ function Dashboard() {
                 <h2>Welcome to your Dashboard</h2>
                 <p>Your personalized workspace awaits!</p>
 
-                {showResults && (
+                {tableData && (
                     <div className="search-results show">
                         <h3>Search Results</h3>
-                        <p>{searchResults}</p>
+                        {tableData.rows.length > 0 ? (
+                            <ClientTable
+                                columns={tableData.columns}
+                                rows={tableData.rows}
+                            />
+                        ) : (
+                            <p>No results found.</p>
+                        )}
                     </div>
                 )}
             </main>
