@@ -179,3 +179,9 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 5. Open a Pull Request
 
 ---
+## License 🔒
+
+© 2025 [Anas Abdelaal]. All rights reserved.  
+This repository is proprietary. You may view the code for learning or evaluation purposes only.  
+Copying, modifying, or distributing any part of this project is strictly prohibited without explicit permission.
+
